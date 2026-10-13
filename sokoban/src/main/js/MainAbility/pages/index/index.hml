@@ -1,5 +1,40 @@
-<div class="container">
-    <text class="title">
-        {{ $t('strings.hello') }} {{ title }}
-    </text>
-</div>
+<stack class="screen" onswipe="handleSwipe">
+    <list class="crown-target" ref="crownTarget"></list>
+
+    <div class="menu" if="{{screen === 'menu'}}">
+        <text class="menu-title">Sokoban</text>
+        <text class="difficulty-button" onclick="showMedium">Medium · {{completedCountMedium}} / 100</text>
+        <text class="difficulty-button" onclick="showHard">Hard · {{completedCountHard}} / 100</text>
+    </div>
+
+    <div class="level-screen" if="{{screen === 'levels'}}">
+        <text class="level-title">{{difficulty === 'medium' ? 'Medium' : 'Hard'}} levels</text>
+        <list class="level-list">
+            <list-item class="level-item" for="{{item in levelItems}}" tid="index">
+                <div class="level-box completed" if="{{item.completed}}" onclick="selectLevel(item.index)">
+                    <text class="level-label">Level {{item.number}}</text>
+                </div>
+                <div class="level-box" if="{{!item.completed}}" onclick="selectLevel(item.index)">
+                    <text class="level-label">Level {{item.number}}</text>
+                </div>
+            </list-item>
+        </list>
+    </div>
+
+    <div class="game-page" if="{{screen === 'game'}}">
+        <div class="game-screen" onclick="toggleAxis">
+            <div class="game-header">
+                <text class="header-hi">Hi: {{bestScore}}</text>
+                <text class="header-axis">{{crownAxis === 'lr' ? '↔' : '↕'}}</text>
+                <text class="header-steps">Steps: {{steps}}</text>
+            </div>
+            <div class="board" if="{{!completionVisible}}">
+                <image for="{{item in tiles}}" tid="index" class="tile" src="{{item.src}}"></image>
+            </div>
+            <div class="completion" if="{{completionVisible}}">
+                <text class="completion-level">Level {{levelNumber}}</text>
+                <text class="completion-text">Completed!</text>
+            </div>
+        </div>
+    </div>
+</stack>
