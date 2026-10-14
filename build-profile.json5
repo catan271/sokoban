@@ -1,12 +1,26 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "storePassword": "000000195849FEC4F051262FC5AE127F1E553B6BD9808589FADCED9AD2EF704F3EF140881C2FE2C2E9",
+          "certpath": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Catan.cer",
+          "keyAlias": "catan",
+          "keyPassword": "000000190E3C1FDDA708B6AEA32AAC097FAFBF5A41D6B2D9C8F93EF9397B27F9AFA050D92F9F2BAB71",
+          "profile": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/SokobanDebug.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Catan.p12"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
         "signingConfig": "default",
-        "compatibleSdkVersion": "4.0.0(10)",
-        "runtimeOS": "HarmonyOS",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS"
       }
     ],
     "buildModeSet": [

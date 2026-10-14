@@ -4,22 +4,17 @@ import Game from '../../common/game.js';
 import { MEDIUM_LEVELS, HARD_LEVELS } from '../../common/levels.js';
 
 const STORAGE_KEY = 'sokoban-progress-v1';
-const CROWN_STEP_DEGREES = 20;
+const CROWN_STEP_DEGREES = 36;
 const SCREEN_SIZE = 454;
 const EDGE_SWIPE_THRESHOLD = 40;
-const TILE_SOURCES = {
+const TILE_IMAGES = {
     empty: '',
-    wall: '/common/1.png',
     floor: '/common/2.png',
-    crate: '/common/3.png',
-    'crate-goal': '/common/3.png',
+    wall: '/common/1.png',
     goal: '/common/4.png',
-    'player-down': '/common/5a.png',
-    'player-up': '/common/5b.png',
-    'player-left': '/common/5c.png',
-    'player-right': '/common/5d.png'
+    crate: '/common/3.png',
+    'crate-goal': '/common/3.png'
 };
-
 function emptyProgress() {
     return {
         medium: { completed: {}, best: {} },
@@ -36,6 +31,14 @@ function startsAtEdge(event) {
     if (event.direction === 'right') return event.globalX - distance <= EDGE_SWIPE_THRESHOLD;
     if (event.direction === 'left') return event.globalX + distance >= SCREEN_SIZE - EDGE_SWIPE_THRESHOLD;
     return false;
+}
+
+function tileImage(tile) {
+    if (tile.indexOf('player') === 0) {
+        const direction = tile.slice(tile.lastIndexOf('-') + 1);
+        return '/common/5' + ({ down: 'a', up: 'b', left: 'c', right: 'd' })[direction] + '.png';
+    }
+    return TILE_IMAGES[tile];
 }
 
 export default {
@@ -81,6 +84,7 @@ export default {
                     const progress = JSON.parse(value);
                     if (validProgress(progress)) that.progress = progress;
                 } catch (error) {
+                    console.log(value)
                     console.warn('Unable to restore Sokoban progress');
                 }
                 that.refreshCounts();
@@ -143,18 +147,21 @@ export default {
     },
 
     updateBoard() {
-        const state = this.game.getState();
-        this.tiles = [];
-        for (let index = 0; index < state.board.length; index++) {
-            this.tiles.push({ index: index, src: TILE_SOURCES[state.board[index]] });
+        const board = this.game.getState();
+        const tiles = [];
+        for (let row = 0; row < board.length; row++) {
+            const imageRow = [];
+            for (let column = 0; column < board[row].length; column++) imageRow.push(tileImage(board[row][column]));
+            tiles.push(imageRow);
         }
-        return state;
+        this.tiles = tiles;
     },
 
     move(direction) {
         if (!this.game || this.completionVisible || !this.game.move(direction)) return;
         this.steps++;
-        if (this.updateBoard().won) this.completeLevel();
+        this.updateBoard();
+        if (this.game.isWon()) this.completeLevel();
     },
 
     handleSwipe(event) {
@@ -187,7 +194,7 @@ export default {
         if (this.screen !== 'game' || this.completionVisible || !event || !event.degree) return;
         this.crownDegrees += event.degree;
         if (Math.abs(this.crownDegrees) < CROWN_STEP_DEGREES) return;
-        const turningUp = this.crownDegrees > 0;
+        const turningUp = this.crownDegrees < 0;
         this.crownDegrees = 0;
         if (this.crownAxis === 'lr') {
             this.move(turningUp ? 'left' : 'right');

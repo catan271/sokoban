@@ -125,8 +125,13 @@
 .board {
     width: 400px;
     height: 400px;
+    flex-direction: column;
+}
+
+.board-row {
+    width: 400px;
+    height: 40px;
     flex-direction: row;
-    flex-wrap: wrap;
 }
 
 .tile {

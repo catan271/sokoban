@@ -29,7 +29,9 @@
                 <text class="header-steps">Steps: {{steps}}</text>
             </div>
             <div class="board" if="{{!completionVisible}}">
-                <image for="{{item in tiles}}" tid="index" class="tile" src="{{item.src}}"></image>
+                <div class="board-row" for="{{row in tiles}}">
+                    <image class="tile" for="{{tile in row}}" src="{{tile}}"></image>
+                </div>
             </div>
             <div class="completion" if="{{completionVisible}}">
                 <text class="completion-level">Level {{levelNumber}}</text>
