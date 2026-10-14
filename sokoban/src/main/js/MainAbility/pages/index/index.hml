@@ -30,7 +30,22 @@
             </div>
             <div class="board" if="{{!completionVisible}}">
                 <div class="board-row" for="{{row in tiles}}">
-                    <image class="tile" for="{{tile in row}}" src="{{tile}}"></image>
+                    <div class="tile" for="{{tile in row}}">
+                        <div class="wall" if="{{tile === 'wall'}}"></div>
+                        <div class="floor" if="{{tile === 'floor'}}"></div>
+                        <div class="ground-object" if="{{tile === 'goal'}}">
+                            <div class="target"></div>
+                        </div>
+                        <div class="ground-object" if="{{tile === 'crate'}}">
+                            <div class="crate"></div>
+                        </div>
+                        <div class="ground-object" if="{{tile === 'crate-goal'}}">
+                            <div class="crate-on-target"></div>
+                        </div>
+                        <div class="ground-object" if="{{tile === 'player'}}">
+                            <div class="player"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="completion" if="{{completionVisible}}">

@@ -5,11 +5,24 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "storePassword": "000000195849FEC4F051262FC5AE127F1E553B6BD9808589FADCED9AD2EF704F3EF140881C2FE2C2E9",
           "certpath": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Catan.cer",
+          "storePassword": "00000019221A9A0A69BB529016803C2A5796FA45623ABE3F602F3F43487DF8438EAD9E064A7E6D037C",
           "keyAlias": "catan",
-          "keyPassword": "000000190E3C1FDDA708B6AEA32AAC097FAFBF5A41D6B2D9C8F93EF9397B27F9AFA050D92F9F2BAB71",
+          "keyPassword": "00000019D0FE6499E3E00CD897E5EBBFBBA4AEAAB9F7C3F1B7EF697318D2E4E7DB59837407407531CD",
           "profile": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/SokobanDebug.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Catan.p12"
+        }
+      },
+      {
+        "name": "release",
+        "type": "HarmonyOS",
+        "material": {
+          "storePassword": "000000194F25D26BED5B165A30D514098EDD08A5AEB72AC41573A4A5833CC2CC8FBA262456059CCFA4",
+          "certpath": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Catan Release.cer",
+          "keyAlias": "catan",
+          "keyPassword": "0000001922653793932E44084D1F1EECF09817819B903FC56E39EB34D2AF8B53E560C61869FE4F1545",
+          "profile": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Sokoban ReleaseRelease.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "D:/CodeWorkspace/Projects/HuaweiLiteWearables/Catan.p12"
         }
@@ -19,6 +32,12 @@
       {
         "name": "default",
         "signingConfig": "default",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS"
+      },
+      {
+        "name": "release",
+        "signingConfig": "release",
         "compatibleSdkVersion": "5.0.0(12)",
         "runtimeOS": "HarmonyOS"
       }
@@ -40,7 +59,13 @@
         {
           "name": "default",
           "applyToProducts": [
-            "default"
+            "default",
+          ]
+        },
+        {
+          "name": "release",
+          "applyToProducts": [
+            "release",
           ]
         }
       ]

@@ -7,14 +7,6 @@ const STORAGE_KEY = 'sokoban-progress-v1';
 const CROWN_STEP_DEGREES = 36;
 const SCREEN_SIZE = 454;
 const EDGE_SWIPE_THRESHOLD = 40;
-const TILE_IMAGES = {
-    empty: '',
-    floor: '/common/2.png',
-    wall: '/common/1.png',
-    goal: '/common/4.png',
-    crate: '/common/3.png',
-    'crate-goal': '/common/3.png'
-};
 function emptyProgress() {
     return {
         medium: { completed: {}, best: {} },
@@ -31,14 +23,6 @@ function startsAtEdge(event) {
     if (event.direction === 'right') return event.globalX - distance <= EDGE_SWIPE_THRESHOLD;
     if (event.direction === 'left') return event.globalX + distance >= SCREEN_SIZE - EDGE_SWIPE_THRESHOLD;
     return false;
-}
-
-function tileImage(tile) {
-    if (tile.indexOf('player') === 0) {
-        const direction = tile.slice(tile.lastIndexOf('-') + 1);
-        return '/common/5' + ({ down: 'a', up: 'b', left: 'c', right: 'd' })[direction] + '.png';
-    }
-    return TILE_IMAGES[tile];
 }
 
 export default {
@@ -150,9 +134,12 @@ export default {
         const board = this.game.getState();
         const tiles = [];
         for (let row = 0; row < board.length; row++) {
-            const imageRow = [];
-            for (let column = 0; column < board[row].length; column++) imageRow.push(tileImage(board[row][column]));
-            tiles.push(imageRow);
+            const tileRow = [];
+            for (let column = 0; column < board[row].length; column++) {
+                const tile = board[row][column];
+                tileRow.push(tile.indexOf('player') === 0 ? 'player' : tile);
+            }
+            tiles.push(tileRow);
         }
         this.tiles = tiles;
     },

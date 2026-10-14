@@ -139,6 +139,55 @@
     height: 40px;
 }
 
+.floor,
+.ground-object {
+    width: 40px;
+    height: 40px;
+    background-color: #8496a7;
+}
+
+.ground-object {
+    justify-content: center;
+    align-items: center;
+}
+
+.wall {
+    width: 40px;
+    height: 40px;
+    background-color: #e23030;
+}
+
+.target {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background-color: #d6a64e;
+}
+
+.crate,
+.crate-on-target {
+    width: 32px;
+    height: 32px;
+    border-width: 2px;
+    border-color: #4a3020;
+    border-radius: 4px;
+}
+
+.crate {
+    background-color: #a56a3c;
+}
+
+.crate-on-target {
+    background-color: #41b879;
+}
+
+.player {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: #3176e3;
+}
+
 .completion {
     width: 400px;
     height: 400px;
