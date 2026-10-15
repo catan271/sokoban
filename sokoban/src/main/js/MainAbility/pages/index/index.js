@@ -3,19 +3,24 @@ import app from '@system.app';
 import Game from '../../common/game.js';
 import { MEDIUM_LEVELS, HARD_LEVELS } from '../../common/levels.js';
 
-const STORAGE_KEY = 'sokoban-progress-v1';
 const CROWN_STEP_DEGREES = 36;
 const SCREEN_SIZE = 454;
 const EDGE_SWIPE_THRESHOLD = 40;
+const LEVEL_COUNT = 100;
 function emptyProgress() {
     return {
-        medium: { completed: {}, best: {} },
-        hard: { completed: {}, best: {} }
+        medium: { best: {} },
+        hard: { best: {} }
     };
 }
 
-function validProgress(progress) {
-    return progress && progress.medium && progress.hard && progress.medium.completed && progress.medium.best && progress.hard.completed && progress.hard.best;
+function storageKey(difficulty, index) {
+    return difficulty + '-' + (index + 1);
+}
+
+function validScore(value) {
+    const score = Number(value);
+    return value !== '' && isFinite(score) && score >= 0 && Math.floor(score) === score;
 }
 
 function startsAtEdge(event) {
@@ -61,31 +66,40 @@ export default {
 
     restoreProgress() {
         const that = this;
-        storage.get({
-            key: STORAGE_KEY,
-            success: function (value) {
-                try {
-                    const progress = JSON.parse(value);
-                    if (validProgress(progress)) that.progress = progress;
-                } catch (error) {
-                    console.log(value)
-                    console.warn('Unable to restore Sokoban progress');
-                }
-                that.refreshCounts();
-            },
-            fail: function () {
-                that.refreshCounts();
+        ['medium', 'hard'].forEach(function (difficulty) {
+            for (let index = 0; index < LEVEL_COUNT; index++) {
+                storage.get({
+                    key: storageKey(difficulty, index),
+                    success: function (value) {
+                        if (!validScore(value)) return;
+                        const savedScore = Number(value);
+                        const currentScore = that.progress[difficulty].best[index];
+                        if (currentScore === undefined || savedScore < currentScore) {
+                            that.progress[difficulty].best[index] = savedScore;
+                        }
+                        that.refreshCounts();
+                        if (that.screen === 'levels' && that.difficulty === difficulty) {
+                            that.showDifficulty(difficulty);
+                        }
+                        if (that.screen === 'game' && that.difficulty === difficulty && that.levelNumber === index + 1) {
+                            that.bestScore = that.progress[difficulty].best[index];
+                        }
+                    }
+                });
             }
         });
     },
 
-    saveProgress() {
-        storage.set({ key: STORAGE_KEY, value: JSON.stringify(this.progress) });
+    saveBestScore(difficulty, index) {
+        storage.set({
+            key: storageKey(difficulty, index),
+            value: String(this.progress[difficulty].best[index])
+        });
     },
 
     refreshCounts() {
-        this.completedCountMedium = Object.keys(this.progress.medium.completed).length;
-        this.completedCountHard = Object.keys(this.progress.hard.completed).length;
+        this.completedCountMedium = Object.keys(this.progress.medium.best).length;
+        this.completedCountHard = Object.keys(this.progress.hard.best).length;
     },
 
     levelsForDifficulty(difficulty) {
@@ -103,18 +117,18 @@ export default {
     showDifficulty(difficulty) {
         this.difficulty = difficulty;
         this.levelItems = [];
-        for (let index = 0; index < 100; index++) {
+        for (let index = 0; index < LEVEL_COUNT; index++) {
             this.levelItems.push({
                 index: index,
                 number: index + 1,
-                completed: !!this.progress[difficulty].completed[index]
+                completed: this.progress[difficulty].best[index] !== undefined
             });
         }
         this.screen = 'levels';
     },
 
     selectLevel(index) {
-        if (index < 0 || index >= 100) return;
+        if (index < 0 || index >= LEVEL_COUNT) return;
         this.openLevel(index);
     },
 
@@ -125,7 +139,8 @@ export default {
         this.crownDegrees = 0;
         this.completionVisible = false;
         this.game = new Game(this.levelsForDifficulty(this.difficulty)[index]);
-        this.bestScore = this.progress[this.difficulty].best[index] || '-';
+        const bestScore = this.progress[this.difficulty].best[index];
+        this.bestScore = bestScore === undefined ? '-' : bestScore;
         this.updateBoard();
         this.screen = 'game';
     },
@@ -193,16 +208,17 @@ export default {
     completeLevel() {
         const index = this.levelNumber - 1;
         const record = this.progress[this.difficulty];
-        record.completed[index] = true;
-        if (!record.best[index] || this.steps < record.best[index]) record.best[index] = this.steps;
+        if (record.best[index] === undefined || this.steps < record.best[index]) {
+            record.best[index] = this.steps;
+            this.saveBestScore(this.difficulty, index);
+        }
         this.bestScore = record.best[index];
-        this.saveProgress();
         this.refreshCounts();
         this.completionVisible = true;
         const that = this;
         this.completionTimer = setTimeout(function () {
             that.completionVisible = false;
-            if (index < 99) {
+            if (index < LEVEL_COUNT - 1) {
                 that.openLevel(index + 1);
             } else {
                 that.showDifficulty(that.difficulty);
